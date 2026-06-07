@@ -80,6 +80,7 @@ VAULT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 META_DIR="${VAULT_ROOT}/.vault-meta"
 LOCK_DIR="${META_DIR}/locks"
 META_LOCK="${META_DIR}/.wiki-lock.meta"
+META_LOCK_DIR="${META_DIR}/.wiki-lock.meta.d"
 STALE_AFTER_SEC=60
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -92,6 +93,7 @@ if [ -n "${WIKI_LOCK_VAULT:-}" ]; then
   META_DIR="${VAULT_ROOT}/.vault-meta"
   LOCK_DIR="${META_DIR}/locks"
   META_LOCK="${META_DIR}/.wiki-lock.meta"
+  META_LOCK_DIR="${META_DIR}/.wiki-lock.meta.d"
 fi
 
 sha1_of() {
@@ -151,11 +153,33 @@ is_alive() {
 # acquire/release/clear-stale don't race against each other.
 with_meta_lock() {
   ensure_dirs
-  # Use flock under bash's redirect; meta lock is short-lived per command.
-  (
-    flock -x -w 5 9 || die "could not acquire meta-lock within 5s" 1
-    "$@"
-  ) 9>"$META_LOCK"
+  if command -v flock >/dev/null 2>&1; then
+    # Use flock under bash's redirect; meta lock is short-lived per command.
+    (
+      flock -x -w 5 9 || die "could not acquire meta-lock within 5s" 1
+      "$@"
+    ) 9>"$META_LOCK"
+    return $?
+  fi
+
+  local waited=0
+  while ! mkdir "$META_LOCK_DIR" 2>/dev/null; do
+    if [ "$waited" -ge 50 ]; then
+      die "could not acquire meta-lock within 5s" 1
+    fi
+    sleep 0.1
+    waited=$((waited + 1))
+  done
+  trap 'rm -rf "$META_LOCK_DIR"' EXIT INT TERM
+
+  local rc
+  set +e
+  "$@"
+  rc=$?
+  set -e
+  rm -rf "$META_LOCK_DIR"
+  trap - EXIT INT TERM
+  return "$rc"
 }
 
 read_lockfile() {

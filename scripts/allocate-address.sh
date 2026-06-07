@@ -2,7 +2,8 @@
 # allocate-address.sh — atomic creation-order address allocation for the vault.
 #
 # Reserves the next address of the form c-NNNNNN and increments the counter
-# under an exclusive flock. On missing counter file, recovers by scanning the
+# under an exclusive lock. Uses flock when available, with an atomic mkdir
+# fallback for macOS environments that do not ship flock. On missing counter file, recovers by scanning the
 # vault for the highest existing c-NNNNNN in page frontmatter and resuming from
 # max+1. Never silently resets to 1 in a non-empty vault.
 #
@@ -22,6 +23,7 @@ set -euo pipefail
 VAULT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COUNTER_FILE="${VAULT_ROOT}/.vault-meta/address-counter.txt"
 LOCK_FILE="${VAULT_ROOT}/.vault-meta/.address.lock"
+LOCK_DIR="${VAULT_ROOT}/.vault-meta/.address.lock.d"
 WIKI_DIR="${VAULT_ROOT}/wiki"
 
 MODE="${1:-allocate}"
@@ -31,9 +33,26 @@ mkdir -p "$(dirname "$COUNTER_FILE")" || {
   exit 2
 }
 
-# Acquire exclusive lock with 5-second timeout. Release automatically on scope exit.
-exec 9>"$LOCK_FILE"
-if ! flock -x -w 5 9; then
+acquire_lock() {
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>"$LOCK_FILE"
+    flock -x -w 5 9
+    return $?
+  fi
+
+  local waited=0
+  while ! mkdir "$LOCK_DIR" 2>/dev/null; do
+    if [ "$waited" -ge 50 ]; then
+      return 1
+    fi
+    sleep 0.1
+    waited=$((waited + 1))
+  done
+  trap 'rm -rf "$LOCK_DIR"' EXIT INT TERM
+}
+
+# Acquire exclusive lock with 5-second timeout. Release automatically on exit.
+if ! acquire_lock; then
   echo "ERR: could not acquire address allocator lock within 5s" >&2
   exit 1
 fi
