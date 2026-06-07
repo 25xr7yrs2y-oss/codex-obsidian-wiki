@@ -52,6 +52,9 @@ auth.json
 WIKI*.md
 PROMPT.md
 Welcome.md
+# Codex prompt templates are intentional project files, even when their
+# basenames overlap root-level Obsidian scratch patterns.
+!prompts/*.md
 *.tmp.*
 Obsidian vault*
 Untitled.canvas

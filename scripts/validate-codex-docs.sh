@@ -22,6 +22,15 @@ for path in "${required[@]}"; do
   fi
 done
 
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  for path in "${required[@]}"; do
+    if ! git ls-files --error-unmatch "$path" >/dev/null 2>&1; then
+      echo "required Codex path is present but not tracked by git: $path" >&2
+      exit 1
+    fi
+  done
+fi
+
 if ! grep -q "Codex CLI Operating Protocol" AGENTS.md; then
   echo "AGENTS.md does not contain the Codex operating protocol" >&2
   exit 1
