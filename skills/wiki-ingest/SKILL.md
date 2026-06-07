@@ -17,7 +17,7 @@ Before mutating any vault file, consult `.vault-meta/transport.json` (auto-creat
 
 - **cli** — `obsidian-cli write "$VAULT" "$NOTE" < content.md` (or `append`, `property:set`); see [`skills/wiki-cli/SKILL.md`](../wiki-cli/SKILL.md)
 - **mcp-obsidian** / **mcpvault** — `mcp__obsidian-vault__write_note` and friends; see [`skills/wiki/references/mcp-setup.md`](../wiki/references/mcp-setup.md)
-- **filesystem** — Claude's `Write`/`Edit` tools with absolute vault-rooted paths (final floor; always works)
+- **filesystem** — the agent's file editing tools with absolute vault-rooted paths (final floor; always works)
 
 Full decision tree: [`wiki/references/transport-fallback.md`](../../wiki/references/transport-fallback.md).
 
@@ -140,7 +140,7 @@ Trigger: user passes an image file path (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp
 
 Steps:
 
-1. **Read** the image file using the Read tool. Claude can process images natively.
+1. **Read** the image file using the available image/file tool. Codex can reason over attached images when the client provides them; otherwise create a text description from OCR or user-supplied context first.
 2. **Describe** the image contents: extract all text (OCR), identify key concepts, entities, diagrams, and data visible in the image.
 3. **Save** the description to `.raw/images/[slug]-[YYYY-MM-DD].md`:
    ```markdown
@@ -213,7 +213,7 @@ Token budget matters. Follow these rules during ingest:
 - Read only 3-5 existing pages per ingest. If you need 10+, you are reading too broadly.
 - Use PATCH for surgical edits. Never re-read an entire file just to update one field.
 - Keep wiki pages short. 100-300 lines max. If a page grows beyond 300 lines, split it.
-- Use search (`/search/simple/`) to find specific content without reading full pages.
+- Use search tools or repository search to find specific content without reading full pages.
 
 ---
 

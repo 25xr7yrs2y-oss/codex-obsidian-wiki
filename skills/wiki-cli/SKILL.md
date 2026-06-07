@@ -8,7 +8,7 @@ allowed-tools: Read Bash
 
 claude-obsidian v1.7+ standardizes on the **Obsidian CLI** (shipped with Obsidian 1.12) as the preferred transport for all vault mutations on desktop. This skill is the recipe reference for using it.
 
-**Substrate preference (v1.7+)**: This skill is a self-contained fallback. **Prefer `kepano/obsidian-skills`** (by Steph Ango, Obsidian CEO) as the authoritative substrate — its `obsidian-cli` skill is the canonical CLI reference for any Agent-Skills runtime. If you see an `obsidian-cli` skill available without the `claude-obsidian:` namespace, that is kepano's version: use it. The recipes below are provided so claude-obsidian remains functional when kepano's marketplace is not installed. Install kepano: `claude plugin marketplace add kepano/obsidian-skills`.
+**Substrate preference (v1.7+)**: This skill is a self-contained fallback. **Prefer `kepano/obsidian-skills`** (by Steph Ango, Obsidian CEO) as the authoritative substrate when it is available — its `obsidian-cli` skill is the canonical CLI reference for portable agent runtimes. The recipes below are provided so this vault remains functional without any external skill install.
 
 ---
 
@@ -68,7 +68,7 @@ Each recipe shows the CLI form first. If the CLI is unavailable per the detectio
 # CLI
 obsidian-cli read "$VAULT" "$NOTE"
 
-# Fallback: Claude's Read tool with absolute path
+# Fallback: the agent's read tool with absolute path
 # Read $VAULT/$NOTE
 ```
 
@@ -77,7 +77,7 @@ obsidian-cli read "$VAULT" "$NOTE"
 # CLI
 obsidian-cli write "$VAULT" "$NOTE" < /path/to/content.md
 
-# Fallback: Claude's Write tool with absolute path
+# Fallback: the agent's write tool with absolute path
 # Write $VAULT/$NOTE with the desired content string
 ```
 
@@ -154,7 +154,7 @@ obsidian-cli bookmarks "$VAULT"
 ## Cross-reference
 
 - Decision tree: [`wiki/references/transport-fallback.md`](../../wiki/references/transport-fallback.md)
-- Legacy MCP options (A/B/C/D): [`skills/wiki/references/mcp-setup.md`](../wiki/references/mcp-setup.md)
+- MCP options (A/B/C/D): [`skills/wiki/references/mcp-setup.md`](../wiki/references/mcp-setup.md)
 - Concurrency policy (v1.7+): [`skills/wiki-ingest/SKILL.md`](../wiki-ingest/SKILL.md) §Concurrency
 - Detection script: [`scripts/detect-transport.sh`](../../scripts/detect-transport.sh)
 

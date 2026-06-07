@@ -46,7 +46,7 @@ v1.8.0 closes that gap. After this release, claude-obsidian is **#1 on 5 of 7 ax
 - `wiki/sources/<slug>.md` — ingested source documents
 - `wiki/entities/<Name>.md` — people, orgs, products (capitalization preserved)
 - `wiki/concepts/<Name>.md` — concepts and frameworks
-- `wiki/sessions/<date>-<topic>.md` — session notes from `/save`
+- `wiki/sessions/<date>-<topic>.md` — session notes from `save`
 
 **When to use:**
 - You're migrating from v1.7 and want zero behavior change
@@ -199,7 +199,7 @@ The `config` block always includes all 4 modes. The active mode is named by `mod
 
 - **Tiny vaults** (<20 notes): the overhead of organization isn't justified yet. Stick with generic.
 - **Vaults you didn't choose to organize**: if you don't care about methodology, don't pick one. Generic is honest.
-- **Cross-project shared vaults** (per global CLAUDE.md `/save` convention): the personal vault at `~/Documents/Obsidian Vault/` has its own organizational choices; the project's mode-router only applies to the project's own `wiki/`.
+- **Cross-project shared vaults** (per global AGENTS.md `save` convention): the personal vault at `~/Documents/Obsidian Vault/` has its own organizational choices; the project's mode-router only applies to the project's own `wiki/`.
 
 ---
 

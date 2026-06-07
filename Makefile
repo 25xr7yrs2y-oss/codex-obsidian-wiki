@@ -1,13 +1,14 @@
-# claude-obsidian Makefile
+# codex-obsidian-wiki Makefile
 # Test runner entry points for DragonScale and vault tooling.
 
 .PHONY: test test-address test-tiling test-boundary test-bm25 test-retrieve \
-        test-lock test-concurrent test-mode test-contextual setup-dragonscale \
+        test-lock test-concurrent test-mode test-contextual test-codex setup-dragonscale \
         setup-retrieve setup-mode clean-test-state help
 
 help:
-	@echo "claude-obsidian developer targets:"
+	@echo "codex-obsidian-wiki developer targets:"
 	@echo "  make test              Run all v1.7 tests (DragonScale + retrieval + concurrency)"
+	@echo "  make test-codex        Validate Codex docs, prompts, helper, and sample workflow"
 	@echo "  make test-address     scripts/allocate-address.sh tests (shell)"
 	@echo "  make test-tiling      scripts/tiling-check.py tests (python, no ollama required)"
 	@echo "  make test-boundary    scripts/boundary-score.py tests (python, no prereqs)"
@@ -22,9 +23,15 @@ help:
 	@echo "  make setup-mode       Run bin/setup-mode.sh to pick a methodology mode (opt-in v1.8)"
 	@echo "  make clean-test-state Remove runtime lockfiles and tiling/embed caches"
 
-test: test-address test-tiling test-boundary test-bm25 test-retrieve test-lock test-concurrent test-mode test-contextual
+test: test-address test-tiling test-boundary test-bm25 test-retrieve test-lock test-concurrent test-mode test-contextual test-codex
 	@echo ""
 	@echo "All tests passed."
+
+test-codex:
+	@echo "=== validate-codex-docs.sh ==="
+	@bash scripts/validate-codex-docs.sh
+	@echo "=== sample-codex-workflow-smoke.sh ==="
+	@bash scripts/sample-codex-workflow-smoke.sh
 
 test-address:
 	@echo "=== test_allocate_address.sh ==="

@@ -10,7 +10,7 @@ updated: 2026-05-17
 
 # Transport Fallback Decision Tree
 
-claude-obsidian v1.7+ supports four ways to read and mutate vault notes. This document is the canonical decision tree skills consult when picking one.
+codex-obsidian-wiki supports four ways to read and mutate vault notes. This document is the canonical decision tree skills consult when picking one.
 
 ## Quick reference
 
@@ -88,7 +88,7 @@ bash scripts/detect-transport.sh --force
 
 ## Manual override
 
-If you have an MCP transport configured (or any other transport not in the auto-detected set) and want claude-obsidian to use it as preferred:
+If you have an MCP transport configured (or any other transport not in the auto-detected set) and want Codex to use it as preferred:
 
 1. Open `.vault-meta/transport.json` in any editor.
 2. Set `"preferred": "mcp-obsidian"` (or `"mcpvault"`, or any custom value).
@@ -103,4 +103,5 @@ To disable the override later, edit the file and either set `"manual_override": 
 
 - Detection script: [`scripts/detect-transport.sh`](../../scripts/detect-transport.sh)
 - CLI recipe reference: [`skills/wiki-cli/SKILL.md`](../../skills/wiki-cli/SKILL.md)
-- Legacy 4-option MCP setup: [`skills/wiki/references/mcp-setup.md`](../../skills/wiki/references/mcp-setup.md) (still authoritative for MCP configuration steps)
+- Codex MCP setup: [`docs/codex-mcp.md`](../../docs/codex-mcp.md)
+- Skill MCP reference: [`skills/wiki/references/mcp-setup.md`](../../skills/wiki/references/mcp-setup.md)

@@ -1,6 +1,6 @@
-# Contributing to claude-obsidian
+# Contributing to codex-obsidian-wiki
 
-Thanks for your interest in improving this plugin. claude-obsidian is a small, focused project; contributions that match its philosophy land quickly.
+Thanks for your interest in improving this Codex + Obsidian vault kit. codex-obsidian-wiki is a small, focused project; contributions that match its philosophy land quickly.
 
 ## Philosophy
 
@@ -10,7 +10,7 @@ Three constraints shape every change:
 2. **Smallest unit that works.** No speculative abstraction. Complexity is earned, not anticipated. Three real callers minimum before an abstraction lands.
 3. **Failure is the spec.** Every new failure mode needs explicit handling. Untrusted input, network calls, and state changes need an explicit blast-radius answer.
 
-The full kernel lives in [`/best-practices`](https://github.com/AgriciDaniel/best-practices) (composable Claude Code skill). The pre-commit verifier agent at [`agents/verifier.md`](agents/verifier.md) enforces it for non-trivial changes.
+The upstream project history references Daniel Agrici's best-practices work. For this fork, `AGENTS.md`, `prompts/`, and the test suite are the maintained Codex-facing contract.
 
 ## Workflow
 
@@ -24,24 +24,24 @@ For typo fixes, doc clarifications, or single-line changes, skip straight to a P
 
 ### 2. Fork + branch
 
-Contributions are accepted on the public canonical repo. Fork [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian) on GitHub, then:
+Fork this repository on GitHub, then:
 
 ```bash
-git clone https://github.com/<your-username>/claude-obsidian.git
-cd claude-obsidian
+git clone https://github.com/<your-username>/codex-obsidian-wiki.git
+cd codex-obsidian-wiki
 git checkout -b your-feature-name
 ```
 
-> ℹ️ The public repo (`AgriciDaniel/claude-obsidian`) is the canonical source of truth. Raise all PRs against it. AI Marketing Hub Pro members working from the early-access mirror (`AI-Marketing-Hub/claude-obsidian`) should target the public canonical too, so contributions land in one place.
+> Upstream attribution remains in the README and license history. PRs to this fork should keep Codex as the default path and preserve Claude assets only as legacy compatibility.
 
 Branch names: `fix/...`, `feat/...`, `docs/...`, `refactor/...`.
 
 ### 3. Set up locally
 
-The plugin runs anywhere Claude Code runs. For development:
+The vault kit runs anywhere Codex CLI can work over local Markdown files. For development:
 
 ```bash
-# Run the hermetic test suite — required before submitting a PR
+# Run the test suite — required before submitting a PR
 make test
 
 # Optionally provision the v1.7 retrieval pipeline (requires consent for API egress)
@@ -69,15 +69,14 @@ If you add a new skill, agent, script, or hook, also add a test under `tests/`. 
 make test
 ```
 
-All 9 suites must pass (~1240 assertions). Tests are hermetic: no network, no ollama, no Anthropic API. If your change adds a network call, gate it behind a `--consent`/`--allow-egress`/env-var pattern matching `scripts/contextual-prefix.py` or `scripts/tiling-check.py`.
+All suites must pass. Tests are hermetic unless explicitly documented otherwise: no network, no ollama, no provider API. If your change adds a network call, gate it behind a `--consent`/`--allow-egress`/env-var pattern matching `scripts/contextual-prefix.py` or `scripts/tiling-check.py`.
 
 ### 6. Run the verifier (optional but recommended)
 
 For multi-file changes:
 
 ```bash
-# After git add, before git commit, dispatch the verifier agent
-# (Claude Code: invoke agents/verifier.md on the staged diff)
+# After git add, before git commit, use agents/verifier.md as a review checklist
 ```
 
 The verifier applies the six-cut + agent kernel to your staged diff and returns findings in BLOCKER / HIGH / MEDIUM / LOW tiers. Address BLOCKER + HIGH before committing.

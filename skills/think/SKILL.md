@@ -80,7 +80,7 @@ In practice: every audit must end with a GROW section. What worked? What to impr
 
 ## When to invoke
 
-Invoke `/think` when:
+Invoke `think` when:
 
 - You are about to make a non-trivial architectural decision (designing a new skill, restructuring a module, choosing between approaches)
 - You are auditing a system and need a methodology spine (per the v1.8.0 pre-push audit pattern)
@@ -88,9 +88,9 @@ Invoke `/think` when:
 - You hit a surprising result and need OBSERVE-internal before adjusting
 - You are about to call something done and need to verify ACCEPT (anti-sycophancy) before claiming the verdict
 - A post-mortem after something went sideways
-- Closing out a session and need a GROW step before /save
+- Closing out a session and need a GROW step before saving a session note
 
-Do NOT invoke `/think` for:
+Do NOT invoke `think` for:
 
 - Single-line typo fixes (the discipline is overkill; just fix it)
 - Trivial lookups (no decision is being made; just answer)
@@ -103,7 +103,7 @@ The framework's value scales with problem novelty + irreversibility. For a one-l
 ## How to use
 
 ```
-/think <problem statement>
+think <problem statement>
 ```
 
 Walks through the 10 stages in order. For each, answer the prompt questions below. Stage outputs feed into stage 9 (CREATE), which produces a recommendation or artifact.
@@ -174,7 +174,7 @@ For each stage, answer these questions before moving to the next:
 - What worked well in this cycle?
 - What would I do differently next time?
 - What inputs feed v_next?
-- Where should this lesson be stored so future-me does not have to re-derive it? (Wiki page? Memory? CLAUDE.md? Audit doc?)
+- Where should this lesson be stored so future-me does not have to re-derive it? (Wiki page? Memory? AGENTS.md? Audit doc?)
 
 ---
 
@@ -194,11 +194,11 @@ The loop fails when:
 
 The 10-principle framework composes with the rest of the plugin:
 
-- **`/best-practices`** (six-cut engineering kernel): The THINK stage's analytical engine. The 10-principle loop wraps the six-cut; the six-cut is the inside of stage 4.
-- **`/save`**: After GROW, save the insights worth not re-deriving. The session note IS the GROW artifact.
-- **`/wiki-lint`**: Periodic audits of the wiki are themselves a GROW step at the system level.
+- **`best-practices`** (six-cut engineering kernel): The THINK stage's analytical engine. The 10-principle loop wraps the six-cut; the six-cut is the inside of stage 4.
+- **`save`**: After GROW, save the insights worth not re-deriving. The session note IS the GROW artifact.
+- **`wiki-lint`**: Periodic audits of the wiki are themselves a GROW step at the system level.
 - **`agents/verifier.md`**: An OBSERVE-internal substitute for solo work — fresh-context reviewer that catches biases the chair missed.
-- **`/autoresearch`**: A LISTEN amplifier — surfaces external signals the chair would not have found alone.
+- **`autoresearch`**: A LISTEN amplifier — surfaces external signals the chair would not have found alone.
 
 Every other skill in this plugin has a "How to think" appendix mapping its specific work to these 10 stages. Read those appendices for skill-specific applications.
 

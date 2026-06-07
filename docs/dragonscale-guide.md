@@ -1,6 +1,6 @@
 # DragonScale Memory Guide
 
-DragonScale Memory is an optional extension for `claude-obsidian`. It adds conservative helpers for log rollups, stable page addresses, duplicate-page linting, and frontier topic suggestion. Start with [docs/install-guide.md](./install-guide.md). For the design spec and rationale, read [wiki/concepts/DragonScale Memory.md](../wiki/concepts/DragonScale%20Memory.md).
+DragonScale Memory is an optional extension for `codex-obsidian-wiki`, adapted from the upstream `claude-obsidian` project. It adds conservative helpers for log rollups, stable page addresses, duplicate-page linting, and frontier topic suggestion. Start with [docs/install-guide.md](./install-guide.md). For the design spec and rationale, read [wiki/concepts/DragonScale Memory.md](../wiki/concepts/DragonScale%20Memory.md).
 
 This page stays close to shipped behavior in `v1.6.0`. It explains what setup creates, what each mechanism actually does, what it needs, and how to turn it off safely without uninstalling the repo.
 
@@ -8,7 +8,7 @@ This page stays close to shipped behavior in `v1.6.0`. It explains what setup cr
 
 ### Scope and opt-in status
 
-DragonScale is a memory-layer extension for the wiki. It covers rollups, deterministic page IDs, duplicate detection, and one opt-in topic-selection path for `/autoresearch`. It is not required for the base vault.
+DragonScale is a memory-layer extension for the wiki. It covers rollups, deterministic page IDs, duplicate detection, and one opt-in topic-selection path for the `autoresearch` workflow. It is not required for the base vault.
 
 If you never run `bash bin/setup-dragonscale.sh`, the base install and the original skill behavior remain in place. The repo uses feature detection so DragonScale can stay optional instead of becoming a hard dependency.
 
@@ -33,10 +33,10 @@ DragonScale is an add-on, not a replacement for base setup. Do the normal vault 
 
 At minimum:
 
-- clone the repo or install the plugin
+- clone the repo
 - run `bash bin/setup-vault.sh`
 - open the folder as an Obsidian vault
-- use `/wiki` to scaffold or continue setup
+- use `bin/codex-vault setup` to scaffold or continue setup
 
 The DragonScale setup script accepts one optional argument, the vault path:
 
@@ -96,7 +96,7 @@ If `python3` is missing:
 
 If ollama is unreachable, `scripts/tiling-check.py` exits `10`. If ollama is reachable but `nomic-embed-text` is not installed, it exits `11`. `wiki-lint` is expected to treat those as skip conditions for semantic tiling, not as a reason to break the rest of the lint flow.
 
-If the boundary helper fails, `/autoresearch` falls back to the normal ask-the-user topic path. It does not force a candidate list and it does not improvise a topic.
+If the boundary helper fails, `autoresearch` falls back to the normal ask-the-user topic path. It does not force a candidate list and it does not improvise a topic.
 
 If DragonScale setup has never been run, `wiki-ingest` and `wiki-lint` keep their non-DragonScale behavior.
 
@@ -431,11 +431,11 @@ This is agenda control, not pure memory.
 
 Mechanism 4 does not just describe the vault. It influences what the agent is likely to research next. That crosses the memory and planning boundary.
 
-The project keeps it opt-in and labels it honestly. If you want the strict memory-layer subset only, omit this path. Do not use `/autoresearch` without a topic, or do not set up and invoke the boundary scorer.
+The project keeps it opt-in and labels it honestly. If you want the strict memory-layer subset only, omit this path. Do not use `autoresearch` without a topic, or do not set up and invoke the boundary scorer.
 
-### How /autoresearch behaves with and without it
+### How Autoresearch Behaves With and Without It
 
-With Mechanism 4 available, and only when `/autoresearch` is invoked without a topic, the skill:
+With Mechanism 4 available, and only when `autoresearch` is invoked without a topic, the workflow:
 
 1. checks for `scripts/boundary-score.py`
 2. checks for `./.vault-meta`
@@ -446,7 +446,7 @@ With Mechanism 4 available, and only when `/autoresearch` is invoked without a t
 
 If the helper exits non-zero, returns invalid JSON, or returns an empty `results` array, the skill falls back.
 
-Without Mechanism 4, or after fallback, `/autoresearch` simply asks:
+Without Mechanism 4, or after fallback, `autoresearch` simply asks:
 
 ```text
 What topic should I research?
@@ -457,8 +457,8 @@ The helper suggests. The user still decides.
 To disable Mechanism 4 without uninstalling:
 
 1. stop running `python3 ./scripts/boundary-score.py`
-2. use `/autoresearch [topic]` with an explicit topic
-3. avoid the no-topic `/autoresearch` path if you do not want frontier suggestions
+2. use `bin/codex-vault autoresearch "[topic]"` with an explicit topic
+3. avoid the no-topic `autoresearch` path if you do not want frontier suggestions
 
 Note that `.vault-meta/` is a shared gate for Mechanisms 2, 3, and 4. Do not remove it to disable Mechanism 4 alone. The scorer itself is read-only and uses no shared state; disabling it just means not invoking it.
 
@@ -546,7 +546,7 @@ You do not need to uninstall the repo to turn DragonScale off. Use the smallest 
 - Mechanism 1: stop invoking `wiki-fold`. It uses no shared state.
 - Mechanism 2: stop using `./scripts/allocate-address.sh`. Existing `address:` frontmatter fields remain as plain content.
 - Mechanism 3: stop running `python3 ./scripts/tiling-check.py` and stop invoking the semantic-tiling path in `wiki-lint`. Cache under `.vault-meta/` is inert when not used.
-- Mechanism 4: stop running `python3 ./scripts/boundary-score.py` and avoid the no-topic `/autoresearch` path. The scorer is read-only; disabling is not invoking it.
+- Mechanism 4: stop running `python3 ./scripts/boundary-score.py` and avoid the no-topic `autoresearch` path. The scorer is read-only; disabling is not invoking it.
 
 `.vault-meta/` is a shared gate for Mechanisms 2, 3, and 4. Removing it disables all three together, not just one.
 

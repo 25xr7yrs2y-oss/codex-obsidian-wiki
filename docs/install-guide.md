@@ -1,254 +1,153 @@
-# claude-obsidian: Install Guide
+# codex-obsidian-wiki Install Guide
 
-**Claude + Obsidian Knowledge Companion**
-Version 1.9.2 · public canonical: [github.com/AgriciDaniel/claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian) · community early-access mirror (Pro): [AI Marketing Hub org](https://github.com/AI-Marketing-Hub)
+Codex + Obsidian persistent wiki vault.
 
-> ℹ️ The install commands below use the **public open-source** URLs (`AgriciDaniel/claude-obsidian`), recommended for everyone and requiring no membership. [AI Marketing Hub Pro](https://www.skool.com/ai-marketing-hub-pro) members who want early access to in-development features can swap every `AgriciDaniel/claude-obsidian` for `AI-Marketing-Hub/claude-obsidian` and the plugin slug `claude-obsidian@agricidaniel-claude-obsidian` for `claude-obsidian@ai-marketing-hub-claude-obsidian`.
-
-> **Optional: DragonScale Memory extension.** If you want flat extractive log folds, deterministic page addresses, semantic tiling lint, and boundary-first autoresearch topic selection, run `bash bin/setup-dragonscale.sh` after the base install. Extra prerequisites beyond the base: `flock` (standard on Linux; available via `util-linux` on macOS) and `python3` (for the tiling and boundary helpers). Optional: `ollama` with `nomic-embed-text` pulled if you want the semantic tiling lint (Mechanism 3 only; it no-ops gracefully when ollama or the model is unavailable). The boundary-first scorer (Mechanism 4) needs only `python3`, no ollama. See [`docs/dragonscale-guide.md`](./dragonscale-guide.md) for the user-facing guide, `wiki/concepts/DragonScale Memory.md` for the full spec, and `CHANGELOG.md` for what shipped in 1.6.0.
-
----
-
-## What is claude-obsidian?
-
-claude-obsidian is a Claude Code plugin + Obsidian vault that builds and maintains a persistent, compounding knowledge base. Every source you add gets processed into cross-referenced wiki pages. Every question you ask pulls from everything that has been read. Knowledge compounds like interest.
-
-Built on Andrej Karpathy's LLM Wiki pattern.
-
----
+This guide is for the Codex CLI fork of [`AgriciDaniel/claude-obsidian`](https://github.com/AgriciDaniel/claude-obsidian). The upstream project credit and MIT license are preserved.
 
 ## Prerequisites
 
-| Tool | How to get it | Notes |
-|------|--------------|-------|
-| **Claude Code** | `npm install -g @anthropic-ai/claude-code` | Free tier available |
-| **Obsidian** | [obsidian.md](https://obsidian.md) | Free |
-| **Git** | Pre-installed on most systems | For Option 1 |
+| Tool | Required | Notes |
+| --- | --- | --- |
+| Codex CLI | Yes | Verify with `codex --version`. |
+| Obsidian | Yes | Download from https://obsidian.md. |
+| Git | Yes | Used for cloning and local history. |
+| Python 3 | Recommended | Used by validation and retrieval helper scripts. |
+| MCP | Optional | Codex can operate directly over Markdown files. |
 
----
-
-## Installation
-
-### Option 1: Clone as vault (recommended)
-
-Full setup in under 2 minutes.
+## Install as a Vault
 
 ```bash
-git clone https://github.com/AgriciDaniel/claude-obsidian
-cd claude-obsidian
+git clone https://github.com/25xr7yrs2y-oss/codex-obsidian-wiki.git
+cd codex-obsidian-wiki
 bash bin/setup-vault.sh
 ```
 
-Then in Obsidian: **Manage Vaults → Open folder as vault → select `claude-obsidian/`**
+Open the folder in Obsidian:
 
-Open Claude Code in the same folder and type `/wiki`.
+```text
+Manage Vaults -> Open folder as vault -> select codex-obsidian-wiki/
+```
 
-### Option 2: Install as Claude Code plugin
-
-Plugin installation in Claude Code is a two-step process. First add the marketplace catalog, then install the plugin from it.
+Start Codex from the same folder:
 
 ```bash
-# Step 1: add the marketplace
-claude plugin marketplace add AgriciDaniel/claude-obsidian
-
-# Step 2: install the plugin
-claude plugin install claude-obsidian@agricidaniel-claude-obsidian
+codex
 ```
 
-Verify the install:
+Codex reads `AGENTS.md` as the project operating protocol.
+
+## Run the Main Workflows
+
+Scaffold or continue the vault:
+
 ```bash
-claude plugin list
+bin/codex-vault setup "Personal research vault for AI notetaking"
 ```
 
-In any Claude Code session: type `/wiki` and Claude walks you through vault setup.
+Ingest a source:
 
-### Option 3: Add to an existing vault
-
-Copy `WIKI.md` from this repo into your vault root. Then paste into Claude:
-
-```
-Read WIKI.md in this project. Then:
-1. Check if Obsidian is installed. If not, install it.
-2. Check if the Local REST API plugin is running on port 27124.
-3. Configure the MCP server.
-4. Ask me ONE question: "What is this vault for?"
-Then scaffold the full wiki structure.
+```bash
+mkdir -p .raw/articles
+cp /path/to/source.md .raw/articles/source.md
+bin/codex-vault ingest .raw/articles/source.md
 ```
 
----
+Ask a question:
 
-## First Steps
-
-### 1. Scaffold the vault
-
-Type `/wiki` in Claude Code. Claude will:
-- Detect your vault mode (website, GitHub, business, personal, research, or book/course)
-- Create the folder structure and core wiki pages
-- Set up `wiki/index.md`, `wiki/hot.md`, `wiki/log.md`, and `wiki/overview.md`
-
-### 2. Drop your first source
-
-Put any document into `.raw/`:
-- PDFs, markdown files, transcripts, articles, URLs
-
-Tell Claude: `ingest [filename]`
-
-Claude reads the source and creates 8–15 cross-referenced wiki pages.
-
-### 3. Ask questions
-
-```
-what do you know about [topic]?
+```bash
+bin/codex-vault query "What do we know about the source-first synthesis pattern?"
 ```
 
-Claude reads the hot cache, scans the index, drills into relevant pages, and gives a synthesized answer, citing specific wiki pages, not training data.
+Run maintenance:
 
----
+```bash
+bin/codex-vault lint
+```
 
-## Commands Reference
+Refresh recent context:
 
-| Command | What Claude does |
-|---------|-----------------|
-| `/wiki` | Setup check, scaffold, or continue where you left off |
-| `ingest [file]` | Read source, create 8–15 wiki pages, update index and log |
-| `ingest all of these` | Batch process multiple sources, then cross-reference |
-| `what do you know about X?` | Read index → relevant pages → synthesize answer |
-| `/save` | File the current conversation as a wiki note |
-| `/save [name]` | Save with a specific title |
-| `/autoresearch [topic]` | Autonomous research loop: search, fetch, synthesize, file |
-| `/canvas` | Open or create a visual canvas |
-| `/canvas add image [path]` | Add an image to the canvas |
-| `/canvas add text [content]` | Add a markdown text card |
-| `/canvas add pdf [path]` | Add a PDF document |
-| `/canvas add note [page]` | Pin a wiki page as a linked card |
-| `lint the wiki` | Health check: orphans, dead links, gaps |
-| `update hot cache` | Refresh `hot.md` with latest context summary |
+```bash
+bin/codex-vault hot
+```
 
----
+## Prompt-Only Use
 
-## Plugins (pre-installed)
+If you prefer an interactive Codex session, print a workflow prompt and paste it into Codex:
 
-Enable in **Settings → Community Plugins**:
+```bash
+bin/codex-vault --print ingest .raw/articles/source.md
+```
+
+Prompt templates live in `prompts/`.
+
+## Optional MCP
+
+Codex MCP setup is documented in [`docs/codex-mcp.md`](codex-mcp.md).
+
+The short version:
+
+- Codex uses `~/.codex/config.toml` for user-level configuration.
+- Trusted projects may use `.codex/config.toml`.
+- MCP servers are configured under `[mcp_servers.<name>]`.
+- The CLI command surface is `codex mcp`.
+
+MCP is not required. Filesystem mode is the fallback and supports the core wiki workflow.
+
+## Optional DragonScale and Retrieval
+
+The upstream project includes optional DragonScale and retrieval helpers. They remain available:
+
+```bash
+bash bin/setup-dragonscale.sh
+bash bin/setup-retrieve.sh
+bash bin/setup-mode.sh
+```
+
+These are optional. The Codex wiki workflow works without them.
+
+## Obsidian Plugins
+
+The bundled vault configuration includes useful defaults. Recommended community plugins:
 
 | Plugin | Purpose |
-|--------|---------|
-| **Calendar** | Right-sidebar calendar with word count and task dots |
-| **Thino** | Quick memo capture panel |
-| **Excalidraw** | Freehand drawing, image annotation |
-| **Banners** | Header images via `banner:` frontmatter |
+| --- | --- |
+| Dataview | Dashboard queries. |
+| Templater | Template automation. |
+| Obsidian Git | Local safety commits. |
+| Calendar | Daily note navigation. |
+| Excalidraw | Visual notes and diagrams. |
 
-Also install from Community Plugins:
-
-| Plugin | Purpose |
-|--------|---------|
-| **Dataview** | Powers the dashboard queries |
-| **Templater** | Auto-fills frontmatter from templates |
-| **Obsidian Git** | Auto-commits vault every 15 minutes |
-
----
-
-## CSS Snippets
-
-Three snippets are auto-enabled by `setup-vault.sh`:
-
-| Snippet | Effect |
-|---------|--------|
-| `vault-colors` | Color-codes wiki folders in the file explorer |
-| `ITS-Dataview-Cards` | Turns Dataview queries into visual card grids |
-| `ITS-Image-Adjustments` | Fine-grained image sizing; append `\|100` to embeds |
-
----
-
-## Six Wiki Modes
-
-| Mode | Use when |
-|------|---------|
-| **A: Website** | Sitemap, content audit, SEO wiki |
-| **B: GitHub** | Codebase map, architecture wiki |
-| **C: Business** | Project wiki, competitive intelligence |
-| **D: Personal** | Second brain, goals, journal synthesis |
-| **E: Research** | Papers, concepts, thesis |
-| **F: Book/Course** | Chapter tracker, course notes |
-
-Modes can be combined.
-
----
-
-## MCP Setup (Optional)
-
-MCP lets Claude read and write vault notes directly without copy-paste.
-
-**Option A: REST API**
-
-1. Install the **Local REST API** plugin in Obsidian
-2. Copy your API key
-3. Run:
+## Validate the Install
 
 ```bash
-claude mcp add-json obsidian-vault '{
-  "type": "stdio",
-  "command": "uvx",
-  "args": ["mcp-obsidian"],
-  "env": {
-    "OBSIDIAN_API_KEY": "your-key",
-    "OBSIDIAN_HOST": "127.0.0.1",
-    "OBSIDIAN_PORT": "27124",
-    "NODE_TLS_REJECT_UNAUTHORIZED": "0"
-  }
-}' --scope user
+bash scripts/validate-codex-docs.sh
+bash scripts/sample-codex-workflow-smoke.sh
+make test
 ```
 
-**Option B: Filesystem (no plugin needed)**
+Expected results:
 
-```bash
-claude mcp add-json obsidian-vault '{
-  "type": "stdio",
-  "command": "npx",
-  "args": ["-y", "@bitbonsai/mcpvault@latest", "/path/to/your/vault"]
-}' --scope user
-```
+- Codex docs and helper validation passes.
+- Sample workflow smoke test confirms `index/log/hot/manifest` behavior.
+- Script test suite passes.
 
----
+## Migrate From Upstream
+
+If you already have a `claude-obsidian` vault:
+
+1. Back up the vault.
+2. Preserve your `wiki/`, `.raw/`, and `.vault-meta/` folders.
+3. Add this fork's `AGENTS.md`, `prompts/`, `bin/codex-vault`, and `docs/codex-mcp.md`.
+4. Keep `CLAUDE.md`, `.claude-plugin/`, and `commands/` only for legacy Claude Code usage.
+5. Run `bin/codex-vault lint` and review the report before doing large ingests.
+6. Run `bin/codex-vault hot` so Codex starts future sessions with recent context.
 
 ## Troubleshooting
 
 | Problem | Fix |
-|---------|-----|
-| `/wiki` says "not found" | Make sure `claude-obsidian` plugin is enabled: `claude plugin list` |
-| Graph colors reset after closing Obsidian | Open Graph view → gear → Color groups → re-add once. Permanent after that. |
-| Excalidraw not loading | Run `bash bin/setup-vault.sh` to download `main.js` (8MB, not in git) |
-| Dashboard shows no results | Install the **Dataview** plugin from Community Plugins |
-| Hot cache not loading at session start | Check hooks: `claude hooks list`; SessionStart hook should be present |
-
----
-
-## Cross-Project Power Move
-
-Point any Claude Code project at this vault. Add to that project's `CLAUDE.md`:
-
-```markdown
-## Wiki Knowledge Base
-Path: ~/path/to/claude-obsidian
-
-When you need context not in this project:
-1. Read wiki/hot.md first (recent context cache)
-2. If not enough, read wiki/index.md
-3. If you need domain details, read the relevant wiki page
-
-Do NOT read the wiki for general coding questions.
-```
-
-Your executive assistant, coding projects, and content workflows all draw from the same knowledge base.
-
----
-
-## Support
-
-- **GitHub (public canonical)**: [github.com/AgriciDaniel/claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian)
-- **Issues**: [github.com/AgriciDaniel/claude-obsidian/issues](https://github.com/AgriciDaniel/claude-obsidian/issues)
-- **Community early-access (Pro)**: [AI Marketing Hub org](https://github.com/AI-Marketing-Hub) · [Skool community](https://www.skool.com/ai-marketing-hub-pro)
-
----
-
-*Built by [AgriciDaniel](https://github.com/AgriciDaniel) / AI Marketing Hub*
-*Based on Andrej Karpathy's LLM Wiki pattern*
+| --- | --- |
+| Codex ignores the vault rules | Start Codex from the vault root and ensure `AGENTS.md` exists. |
+| Helper cannot find Codex | Install or update Codex CLI, then rerun `codex --version`. |
+| MCP is unavailable | Continue in filesystem mode; MCP is optional. |
+| Duplicate pages appear | Run the lint workflow and merge duplicates before further ingest. |
+| Obsidian does not show graph colors | Re-run `bash bin/setup-vault.sh` and reopen the vault. |

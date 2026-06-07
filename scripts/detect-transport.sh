@@ -9,11 +9,11 @@
 #   3. mcpvault    — Filesystem-backed MCP server (BM25 search; no Obsidian plugin).
 #   4. filesystem  — Direct Read/Write/Edit tools. Always available (ultimate floor).
 #
-# MCP auto-detection is deferred to a v1.7.x patch (calling `claude mcp list` from
-# inside a running claude session has reentrancy concerns). For v1.7, we detect
+# MCP auto-detection is deferred because agent MCP clients differ in how they
+# expose configured servers to subprocesses. For v1.7, we detect
 # CLI + filesystem and leave MCP fields as `{"present": null, "detection": "deferred"}`.
 # Users with MCP transports configured can either edit transport.json manually or
-# follow the legacy guidance in wiki/references/mcp-setup.md.
+# follow the Codex guidance in docs/codex-mcp.md.
 #
 # Usage:
 #   ./scripts/detect-transport.sh             # detect and write .vault-meta/transport.json
@@ -193,17 +193,17 @@ snapshot() {
     "filesystem": {
       "present": true,
       "vault_root": "${VAULT_ROOT}",
-      "note": "ultimate fallback; uses Claude's Read/Write/Edit tools directly"
+      "note": "ultimate fallback; uses the agent's filesystem read/write/edit tools directly"
     },
     "mcp_obsidian": {
       "present": null,
       "detection": "deferred",
-      "note": "v1.7 does not auto-detect MCP servers. Configure manually per wiki/references/mcp-setup.md and edit this file by hand if needed."
+      "note": "v1.7 does not auto-detect MCP servers. Configure manually per docs/codex-mcp.md and edit this file by hand if needed."
     },
     "mcpvault": {
       "present": null,
       "detection": "deferred",
-      "note": "v1.7 does not auto-detect MCP servers. Configure manually per wiki/references/mcp-setup.md and edit this file by hand if needed."
+      "note": "v1.7 does not auto-detect MCP servers. Configure manually per docs/codex-mcp.md and edit this file by hand if needed."
     }
   }
 }

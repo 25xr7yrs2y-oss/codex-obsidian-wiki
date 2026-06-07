@@ -20,7 +20,7 @@ vault/
 ├── _meta/
 │   ├── index.md
 │   └── log.md
-└── CLAUDE.md
+└── AGENTS.md
 ```
 
 Frontmatter for `wiki/pages/` notes:
@@ -65,7 +65,7 @@ vault/
 ├── _meta/
 │   ├── index.md
 │   └── log.md
-└── CLAUDE.md
+└── AGENTS.md
 ```
 
 Frontmatter for `wiki/modules/` notes:
@@ -107,7 +107,7 @@ vault/
 ├── _meta/
 │   ├── index.md
 │   └── log.md
-└── CLAUDE.md
+└── AGENTS.md
 ```
 
 Frontmatter for `wiki/decisions/` notes:
@@ -147,7 +147,7 @@ vault/
 │   ├── index.md
 │   ├── log.md
 │   └── hot-cache.md   # ~500-word summary of most active context
-└── CLAUDE.md
+└── AGENTS.md
 ```
 
 Frontmatter for `wiki/goals/` notes:
@@ -187,7 +187,7 @@ vault/
 ├── _meta/
 │   ├── index.md
 │   └── log.md
-└── CLAUDE.md
+└── AGENTS.md
 ```
 
 Frontmatter for `wiki/papers/` notes:
@@ -228,7 +228,7 @@ vault/
 ├── _meta/
 │   ├── index.md
 │   └── log.md
-└── CLAUDE.md
+└── AGENTS.md
 ```
 
 Frontmatter for `wiki/concepts/` notes:

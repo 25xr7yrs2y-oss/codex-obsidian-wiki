@@ -18,14 +18,14 @@ What you expected to happen instead.
 3. ...
 
 ## Environment
-- Plugin version: (e.g. v1.9.0)
-- Claude Code version: (run `claude --version`)
+- Project version or commit:
+- Codex CLI version: (run `codex --version`)
 - OS: (e.g. macOS 14.5, Pop!_OS 24.04, Windows 11)
 - Obsidian version: (if relevant)
 - Transport selected: (filesystem / obsidian-cli / mcp-obsidian — see `.vault-meta/transport.json`)
 
 ## Skill / agent / script involved
-Which surface is affected? (e.g. `/wiki-ingest`, `scripts/wiki-mode.py`, `agents/verifier.md`)
+Which surface is affected? (e.g. `bin/codex-vault ingest`, `prompts/ingest.md`, `scripts/wiki-mode.py`, `agents/verifier.md`)
 
 ## Logs / output
 ```
@@ -33,7 +33,7 @@ Paste relevant terminal output or error messages here.
 ```
 
 ## What you tried
-- [ ] Ran `make test` — all 8 suites green? Yes / No
+- [ ] Ran `make test` — all suites green? Yes / No
 - [ ] Checked CHANGELOG for known issues at your version
 - [ ] Searched existing issues for similar reports
 

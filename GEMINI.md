@@ -1,13 +1,13 @@
-# claude-obsidian: Gemini CLI Instructions
+# codex-obsidian-wiki: Gemini CLI Companion Instructions
 
-This repo is a knowledge base companion that builds persistent, compounding Obsidian wiki vaults using Andrej Karpathy's LLM Wiki pattern. The skills are written in the cross-platform Agent Skills format and work in Gemini CLI / Antigravity alongside Claude Code.
+This repo is a knowledge base companion that builds persistent, compounding Obsidian wiki vaults using Andrej Karpathy's LLM Wiki pattern. The primary maintained path in this fork is Codex CLI via `AGENTS.md` and `prompts/`; the skills are also written in a cross-platform Agent Skills style so Gemini CLI / Antigravity can reuse the same vault conventions.
 
 ## Skills Discovery
 
 Skills live in `skills/<name>/SKILL.md`. To make them available to Gemini CLI:
 
 ```bash
-ln -s "$(pwd)/skills" ~/.gemini/skills/claude-obsidian
+ln -s "$(pwd)/skills" ~/.gemini/skills/codex-obsidian-wiki
 ```
 
 Or run the bundled installer:
@@ -52,12 +52,13 @@ bash bin/setup-multi-agent.sh
 ## Bootstrap
 
 On first session:
-1. Read this file + the project `CLAUDE.md`
+1. Read this file + the project `AGENTS.md`
 2. If `wiki/hot.md` exists, silently read it to restore recent context
-3. Wait for user to type `/wiki` or `ingest` or `query`
+3. Wait for the user to ask for setup, ingest, query, lint, save, or research
 
 ## Project Links
 
-- Plugin (public canonical): https://github.com/AgriciDaniel/claude-obsidian
+- Codex fork: this repository
+- Upstream project: https://github.com/AgriciDaniel/claude-obsidian
 - Community early-access mirror (Pro): https://github.com/AI-Marketing-Hub
 - Pattern: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f

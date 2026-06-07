@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Codex CLI workflow helper for codex-obsidian-wiki.
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROMPTS_DIR="$ROOT/prompts"
+MODE="run"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  bin/codex-vault [--print] <workflow> [details...]
+
+Workflows:
+  setup        Scaffold or continue the vault
+  ingest       Ingest a source from .raw/ or a URL
+  query        Answer from the wiki
+  lint         Run a wiki health check
+  hot          Refresh wiki/hot.md
+  save         File the current conversation as a wiki note
+  autoresearch Run a research loop, then ingest findings
+
+Examples:
+  bin/codex-vault setup "Research vault for AI notetaking"
+  bin/codex-vault ingest .raw/articles/example.md
+  bin/codex-vault query "What do we know about compounding knowledge?"
+  bin/codex-vault --print ingest .raw/example.md
+USAGE
+}
+
+if [ "${1:-}" = "--print" ]; then
+  MODE="print"
+  shift
+fi
+
+WORKFLOW="${1:-}"
+if [ -z "$WORKFLOW" ] || [ "$WORKFLOW" = "-h" ] || [ "$WORKFLOW" = "--help" ]; then
+  usage
+  exit 0
+fi
+shift || true
+
+case "$WORKFLOW" in
+  setup|wiki) TEMPLATE="$PROMPTS_DIR/wiki.md" ;;
+  ingest) TEMPLATE="$PROMPTS_DIR/ingest.md" ;;
+  query) TEMPLATE="$PROMPTS_DIR/query.md" ;;
+  lint) TEMPLATE="$PROMPTS_DIR/lint.md" ;;
+  hot) TEMPLATE="$PROMPTS_DIR/hot.md" ;;
+  save) TEMPLATE="$PROMPTS_DIR/save.md" ;;
+  autoresearch|research) TEMPLATE="$PROMPTS_DIR/autoresearch.md" ;;
+  *)
+    echo "Unknown workflow: $WORKFLOW" >&2
+    usage >&2
+    exit 64
+    ;;
+esac
+
+if [ ! -f "$TEMPLATE" ]; then
+  echo "Missing prompt template: $TEMPLATE" >&2
+  exit 66
+fi
+
+DETAILS="$*"
+PROMPT="$(cat "$TEMPLATE")"
+if [ -n "$DETAILS" ]; then
+  PROMPT="$PROMPT
+
+User request/details:
+$DETAILS"
+fi
+
+if [ "$MODE" = "print" ]; then
+  printf '%s\n' "$PROMPT"
+  exit 0
+fi
+
+printf '%s\n' "$PROMPT" | codex exec --cd "$ROOT" -

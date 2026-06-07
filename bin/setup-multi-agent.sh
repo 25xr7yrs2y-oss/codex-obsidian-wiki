@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# claude-obsidian: multi-agent skill installer
+# codex-obsidian-wiki: multi-agent compatibility installer
 # Symlinks the skills/ directory into each AI agent's expected location.
 # Idempotent: safe to run multiple times.
 #
 # Supported agents:
-#   - Claude Code    : auto-discovered via .claude-plugin/ (no symlink needed)
-#   - Codex CLI      : symlink to ~/.codex/skills/claude-obsidian
+#   - Codex CLI      : uses AGENTS.md + prompts/ + bin/codex-vault in this repo
+#   - Claude Code    : legacy auto-discovery via .claude-plugin/ (no symlink needed)
 #   - OpenCode       : symlink to ~/.opencode/skills/claude-obsidian
 #   - Gemini CLI     : symlink to ~/.gemini/skills/claude-obsidian
 #   - Cursor         : symlink to .cursor/skills (in repo)
 #   - Windsurf       : symlink to .windsurf/skills (in repo)
 #
-# Bootstrap files (AGENTS.md, GEMINI.md, .cursor/rules/, .windsurf/rules/,
+# Bootstrap files (AGENTS.md, prompts/, GEMINI.md, .cursor/rules/, .windsurf/rules/,
 # .github/copilot-instructions.md) are already committed in the repo.
 # This script just wires up the skills directory.
 
@@ -21,7 +21,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SKILLS_DIR="$REPO_ROOT/skills"
 
 if [ ! -d "$SKILLS_DIR" ]; then
-  echo "ERROR: $SKILLS_DIR does not exist. Are you running this from the claude-obsidian repo?"
+    echo "ERROR: $SKILLS_DIR does not exist. Are you running this from the codex-obsidian-wiki repo?"
   exit 1
 fi
 
@@ -57,12 +57,11 @@ link_if_missing() {
   echo -e "${GREEN}[$agent_name] linked: $dest -> $target${NC}"
 }
 
-echo "claude-obsidian: multi-agent skill installer"
+echo "codex-obsidian-wiki: multi-agent compatibility installer"
 echo "Repo: $REPO_ROOT"
 echo
 
-# Codex CLI
-link_if_missing "$SKILLS_DIR" "$HOME/.codex/skills/claude-obsidian" "Codex CLI"
+echo -e "${GRAY}[Codex CLI] no global install required. Use AGENTS.md, prompts/, and bin/codex-vault from this repo.${NC}"
 
 # OpenCode
 link_if_missing "$SKILLS_DIR" "$HOME/.opencode/skills/claude-obsidian" "OpenCode"
@@ -77,11 +76,11 @@ link_if_missing "$SKILLS_DIR" "$REPO_ROOT/.cursor/skills" "Cursor"
 link_if_missing "$SKILLS_DIR" "$REPO_ROOT/.windsurf/skills" "Windsurf"
 
 echo
-echo -e "${GREEN}Done.${NC} Bootstrap files (AGENTS.md, GEMINI.md, .cursor/rules/, .windsurf/rules/, .github/copilot-instructions.md) are already in this repo."
+echo -e "${GREEN}Done.${NC} Bootstrap files (AGENTS.md, prompts/, GEMINI.md, .cursor/rules/, .windsurf/rules/, .github/copilot-instructions.md) are already in this repo."
 echo
 echo "To verify each agent picks up the skills:"
-echo "  - Claude Code: open the project, type /wiki"
-echo "  - Codex CLI:   codex --list-skills | grep claude-obsidian"
+echo "  - Codex CLI:   bin/codex-vault --print ingest .raw/example.md"
+echo "  - Claude Code: legacy path via .claude-plugin/ and commands/"
 echo "  - Cursor:      open the project, ask 'what skills do you have?'"
 echo "  - Windsurf:    open in Cascade, ask the same"
 echo "  - Gemini CLI:  gemini --list-skills (if supported)"

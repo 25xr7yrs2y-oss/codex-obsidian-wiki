@@ -1,19 +1,19 @@
 ---
 name: canvas
-description: "Visual layer of the wiki. Add images, text cards, PDFs, and wiki pages to Obsidian canvas files with auto-positioning inside zones. Integrates with /banana for image capture. Triggers on: /canvas, canvas new, canvas add image, canvas add text, canvas add pdf, canvas add note, canvas zone, canvas list, canvas from banana, add to canvas, put this on the canvas, open canvas, create canvas."
+description: "Visual layer of the wiki. Add images, text cards, PDFs, and wiki pages to Obsidian canvas files with auto-positioning inside zones. Triggers on: canvas, canvas new, canvas add image, canvas add text, canvas add pdf, canvas add note, canvas zone, canvas list, add to canvas, put this on the canvas, open canvas, create canvas."
 allowed-tools: Read Write Edit Glob Grep
 ---
 
 # canvas: Visual Reference Layer
 
 The three knowledge capture layers:
-- `/save` → text synthesis (wiki/questions/, wiki/concepts/)
-- `/autoresearch` → structured knowledge (wiki/sources/, wiki/concepts/)
-- `/canvas` → visual references (wiki/canvases/)
+- `save` → text synthesis (wiki/questions/, wiki/concepts/)
+- `autoresearch` → structured knowledge (wiki/sources/, wiki/concepts/)
+- `canvas` → visual references (wiki/canvases/)
 
 A canvas is a JSON file Obsidian renders as an infinite visual board. This skill reads and writes canvas JSON directly. Read `references/canvas-spec.md` for the full format reference before making any edits. This spec aligns with the [JSON Canvas open standard](https://jsoncanvas.org/).
 
-**Substrate preference (v1.7+)**: This skill is a self-contained fallback. **Prefer `kepano/obsidian-skills`** as the authoritative substrate — its `json-canvas` skill is the canonical spec reference. If you see a `json-canvas` skill available without the `claude-obsidian:` namespace, that is kepano's version: use it for spec questions. Continue to use this `canvas` skill for the wiki-scoped *workflows* (positioning into wiki/canvases/, /banana integration, zone layout) — those are unique to claude-obsidian and live above kepano's primitive. Install kepano: `claude plugin marketplace add kepano/obsidian-skills`.
+**Substrate preference (v1.7+)**: This skill is a self-contained fallback. **Prefer `kepano/obsidian-skills`** as the authoritative substrate when it is available — its `json-canvas` skill is the canonical spec reference. Continue to use this `canvas` skill for the wiki-scoped workflows (positioning into `wiki/canvases/`, image capture integration, zone layout) because those are unique to this vault kit and live above kepano's primitive. Repo: https://github.com/kepano/obsidian-skills.
 
 ---
 

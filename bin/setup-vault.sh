@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# claude-obsidian vault setup script
+# codex-obsidian-wiki vault setup script
 # Run this ONCE before opening Obsidian for the first time.
 # Usage: bash bin/setup-vault.sh [optional: /path/to/vault]
 # Default: uses the directory where this script lives (the vault root)
@@ -10,7 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VAULT="${1:-$(dirname "$SCRIPT_DIR")}"
 OBSIDIAN="$VAULT/.obsidian"
 
-echo "Setting up claude-obsidian vault at: $VAULT"
+echo "Setting up codex-obsidian-wiki vault at: $VAULT"
 
 # ── 1. Create directories ─────────────────────────────────────────────────────
 mkdir -p "$OBSIDIAN/snippets"
@@ -32,18 +32,23 @@ cat > "$OBSIDIAN/graph.json" << 'EOF'
     { "query": "path:wiki/entities",    "color": { "a": 1, "rgb": 12945088 } },
     { "query": "path:wiki/concepts",    "color": { "a": 1, "rgb": 5227007  } },
     { "query": "path:wiki/sources",     "color": { "a": 1, "rgb": 6986069  } },
+    { "query": "path:wiki/questions",   "color": { "a": 1, "rgb": 14474410 } },
+    { "query": "path:wiki/comparisons", "color": { "a": 1, "rgb": 13724009 } },
     { "query": "path:wiki/meta",        "color": { "a": 1, "rgb": 5676246  } },
-    { "query": "path:wiki",             "color": { "a": 1, "rgb": 5676246  } }
+    { "query": "path:wiki",             "color": { "a": 1, "rgb": 4473924  } }
   ],
+  "collapse-display": true,
   "showArrow": true,
   "textFadeMultiplier": -1,
-  "nodeSizeMultiplier": 1.8,
-  "lineSizeMultiplier": 1.2,
-  "centerStrength": 0.5,
-  "repelStrength": 30,
-  "linkStrength": 1.5,
-  "linkDistance": 120,
-  "scale": 1.0
+  "nodeSizeMultiplier": 2,
+  "lineSizeMultiplier": 0.8,
+  "collapse-forces": false,
+  "centerStrength": 0.25,
+  "repelStrength": 20,
+  "linkStrength": 1,
+  "linkDistance": 80,
+  "scale": 0.5191098990818888,
+  "close": true
 }
 EOF
 
@@ -54,8 +59,10 @@ cat > "$OBSIDIAN/app.json" << 'EOF'
     "agents/",
     "commands/",
     "hooks/",
+    "prompts/",
     "skills/",
     "_templates/",
+    "AGENTS.md",
     "README.md",
     "CLAUDE.md",
     "WIKI.md",
@@ -79,10 +86,14 @@ EOF
 EXCALIDRAW="$OBSIDIAN/plugins/obsidian-excalidraw-plugin"
 if [ -f "$EXCALIDRAW/manifest.json" ] && [ ! -f "$EXCALIDRAW/main.js" ]; then
   echo "Downloading Excalidraw main.js (~8MB)..."
-  curl -sS -L \
+  if curl -4 -sS -L --connect-timeout 20 --max-time 120 \
     "https://github.com/zsviczian/obsidian-excalidraw-plugin/releases/latest/download/main.js" \
-    -o "$EXCALIDRAW/main.js"
-  echo "✓ Excalidraw main.js downloaded"
+    -o "$EXCALIDRAW/main.js"; then
+    echo "✓ Excalidraw main.js downloaded"
+  else
+    rm -f "$EXCALIDRAW/main.js"
+    echo "⚠ Excalidraw main.js download skipped. Re-run this script later or install Excalidraw from Obsidian Community Plugins."
+  fi
 elif [ -f "$EXCALIDRAW/main.js" ]; then
   echo "✓ Excalidraw main.js already present"
 fi
@@ -95,7 +106,7 @@ echo "  1. Open Obsidian"
 echo "  2. Manage Vaults → Open folder as vault → select: $VAULT"
 echo "  3. Enable community plugins when prompted (Calendar, Thino, Excalidraw, Banners are pre-installed)"
 echo "  4. Install: Dataview, Templater, Obsidian Git  (Settings → Community Plugins)"
-echo "  5. Type /wiki in Claude Code to scaffold your knowledge base"
+echo "  5. Run: bin/codex-vault setup \"What this vault is for\""
 echo ""
 echo "Pre-installed plugins:"
 echo "  - Calendar (sidebar calendar with word count + task dots)"
